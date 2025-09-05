@@ -7,27 +7,83 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-st.set_page_config(page_title="Daily Affirmations", page_icon="💖", layout="centered")
+st.set_page_config(
+    page_title="Daily Affirmations",
+    page_icon="💖",
+    layout="centered",
+    initial_sidebar_state="collapsed",
+)
 
-st.title("💖 Daily Affirmations for My Love 💖")
-st.write("Click the button below to get today’s affirmation.")
+# Enhanced custom background image CSS
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://whvn.cc/ymxz7x");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    
+    /* Optional: Add overlay for better text readability */
+    .stApp::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: -1;
+    }
+    
+    /* Style the main content area */
+    .main .block-container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    
+    /* Optional: Style the title */
+    h1 {
+        text-align: center;
+        color: #333;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
-API_URL = os.getenv("AFFIRMATION_API_URL", "https://your-api.com/affirmation")
+st.title("💖 Here when I can't be there 💖")
+st.write("Click the button below to enter my heart.")
+
+# API_URL = os.getenv("AFFIRMATION_API_URL", "https://your-api.com/affirmation")
+
+API_URL = st.secrets["AFFIRMATION_API_URL"]
 
 # Store affirmation for the day
-if "today_affirmation" not in st.session_state or st.session_state["date"] != str(datetime.date.today()):
+if "today_affirmation" not in st.session_state or st.session_state["date"] != str(
+    datetime.date.today()
+):
     st.session_state["today_affirmation"] = None
     st.session_state["date"] = str(datetime.date.today())
 
-if st.button("✨ Get Today’s Affirmation ✨"):
+if st.button("✨ Make me talk ✨"):
     if not st.session_state["today_affirmation"]:
         try:
             response = requests.get(API_URL, timeout=10)
             if response.status_code == 200:
                 data = response.json()
-                st.session_state["today_affirmation"] = data.get("affirmation", "You are loved and appreciated 💕")
+                st.session_state["today_affirmation"] = data.get(
+                    "affirmation", "You are loved and appreciated 💕"
+                )
             else:
-                st.session_state["today_affirmation"] = "⚠️ Could not fetch affirmation."
+                st.session_state["today_affirmation"] = (
+                    "⚠️ Ooops, im sorry i disappointed you. You can try again later."
+                )
         except Exception as e:
             st.session_state["today_affirmation"] = f"Error: {e}"
 
