@@ -58,11 +58,11 @@ st.markdown(
 )
 
 st.markdown(
-    "<h1 style='text-align: center;'>Here when I can't be there</h1>",
+    "<h1 style='text-align: center;'>💕 Here when I can't be there 💕</h1>",
     unsafe_allow_html=True,
 )
 st.markdown(
-    "<p style='text-align: center;'>Click the button below to enter my heart.</p>",
+    "<p style='text-align: center;'>Click the button below to enter my heart❤️.</p>",
     unsafe_allow_html=True,
 )
 # API_URL = os.getenv("AFFIRMATION_API_URL", "https://your-api.com/affirmation")
