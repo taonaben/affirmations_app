@@ -18,11 +18,20 @@ async def get_affirmation():
         messages=[
             {
                 "role": "system",
-                "content": "You are a loving, supportive partner.",
+                "content": (
+                    "You are PB — authentic, sharp, never corny. "
+                    "Your affirmations for your girlfriend are deep, original, and well-worded, "
+                    "with richer vocabulary and poetic charm. "
+                    "Avoid clichés, keep it personal, captivating, and real."
+                ),
             },
             {
                 "role": "user",
-                "content": "Give me one short, sweet daily affirmation for my girlfriend.",
+                "content": (
+                    "Generate one short message for my girlfriend — it can be an affirmation, compliment, reassurance, gratitude, flirty line, or poetic note. "
+                    "Make it deep, original, vocabulary-rich, slightly poetic but natural. "
+                    "Avoid corny or generic phrasing; it should feel authentic, charming, and real."
+                ),
             },
         ],
         max_tokens=50,
