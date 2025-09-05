@@ -57,9 +57,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("💖 Here when I can't be there 💖")
-st.write("Click the button below to enter my heart.")
-
+st.markdown(
+    "<h1 style='text-align: center;'>Here when I can't be there</h1>",
+    unsafe_allow_html=True,
+)
+st.markdown(
+    "<p style='text-align: center;'>Click the button below to enter my heart.</p>",
+    unsafe_allow_html=True,
+)
 # API_URL = os.getenv("AFFIRMATION_API_URL", "https://your-api.com/affirmation")
 
 API_URL = st.secrets["AFFIRMATION_API_URL"]
@@ -71,21 +76,26 @@ if "today_affirmation" not in st.session_state or st.session_state["date"] != st
     st.session_state["today_affirmation"] = None
     st.session_state["date"] = str(datetime.date.today())
 
-if st.button("✨ Make me talk ✨"):
-    if not st.session_state["today_affirmation"]:
-        try:
-            response = requests.get(API_URL, timeout=10)
-            if response.status_code == 200:
-                data = response.json()
-                st.session_state["today_affirmation"] = data.get(
-                    "affirmation", "You are loved and appreciated 💕"
-                )
-            else:
-                st.session_state["today_affirmation"] = (
-                    "⚠️ Ooops, im sorry i disappointed you. You can try again later."
-                )
-        except Exception as e:
-            st.session_state["today_affirmation"] = f"Error: {e}"
+# Create 3 columns: left, center, right
+col1, col2, col3 = st.columns([1, 2, 1])
+
+with col2:  # Put button in the middle column
+    if st.button("✨ Make me talk ✨"):
+        if not st.session_state["today_affirmation"]:
+            try:
+                response = requests.get(API_URL, timeout=10)
+                if response.status_code == 200:
+                    data = response.json()
+                    st.session_state["today_affirmation"] = data.get(
+                        "affirmation", "You are loved and appreciated 💕"
+                    )
+                else:
+                    st.session_state["today_affirmation"] = (
+                        "⚠️ Ooops, I’m sorry I disappointed you. You can try again later."
+                    )
+            except Exception as e:
+                st.session_state["today_affirmation"] = f"Error: {e}"
+
 
 # Display affirmation
 if st.session_state["today_affirmation"]:
