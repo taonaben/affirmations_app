@@ -3,6 +3,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from datetime import datetime
 import os
+import requests
 from email_service import EmailService
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -19,33 +20,10 @@ class AffirmationScheduler:
         self.openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def generate_affirmation(self) -> str:
-        """Generate a daily affirmation using OpenAI."""
+        """Generate a daily affirmation using the Affirmations API."""
         try:
-            response = self.openai_client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are PB — authentic, sharp, never corny. "
-                            "Your affirmations for your girlfriend are deep, original, and well-worded, "
-                            "with richer vocabulary and poetic charm. "
-                            "Avoid clichés, keep it personal, captivating, and real."
-                        ),
-                    },
-                    {
-                        "role": "user",
-                        "content": (
-                            "Generate one short message for my girlfriend — it can be an affirmation, compliment, reassurance, gratitude, flirty line, or poetic note. "
-                            "Make it deep, original, vocabulary-rich, slightly poetic but natural. "
-                            "Avoid corny or generic phrasing; it should feel authentic, charming, and real."
-                        ),
-                    },
-                ],
-                max_tokens=50,
-                temperature=0.7,
-            )
-            return response.choices[0].message.content.strip()
+            response = requests.get("https://www.affirmations.dev/")
+            return response.json().get("affirmation", "").strip()
         except Exception as e:
             logger.error(f"Failed to generate affirmation: {str(e)}")
             return "You are loved and appreciated more than words can express 💕"
