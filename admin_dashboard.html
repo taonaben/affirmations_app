@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Affirmations Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .dashboard-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1200px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .status-card {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .control-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-custom {
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            margin: 0.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        .btn-success-custom {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            border: none;
+            color: white;
+        }
+        
+        .btn-success-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(86, 171, 47, 0.4);
+            color: white;
+        }
+        
+        .btn-danger-custom {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            border: none;
+            color: white;
+        }
+        
+        .btn-danger-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 65, 108, 0.4);
+            color: white;
+        }
+        
+        .btn-warning-custom {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            border: none;
+            color: white;
+        }
+        
+        .btn-warning-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+            color: white;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-running {
+            background-color: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-stopped {
+            background-color: #dc3545;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .time-input {
+            border-radius: 10px;
+            border: 2px solid #eee;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .time-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .log-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.25rem 0;
+        }
+        
+        .log-success {
+            color: #28a745;
+        }
+        
+        .log-error {
+            color: #dc3545;
+        }
+        
+        .log-info {
+            color: #17a2b8;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="dashboard-container fade-in">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="fas fa-heart"></i> Affirmations Admin Dashboard</h1>
+                <p>Manage your daily affirmation email service</p>
+            </div>
+
+            <!-- Status Overview -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="status-card">
+                        <h4><i class="fas fa-server"></i> Service Status</h4>
+                        <div id="service-status">
+                            <span class="status-indicator status-stopped"></span>
+                            <span id="status-text">Checking...</span>
+                        </div>
+                        <div class="mt-2">
+                            <small id="status-details">Loading status information...</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-card">
+                        <h5><i class="fas fa-clock"></i> Next Email</h5>
+                        <div id="next-email-info">
+                            <p class="mb-1"><strong>Time:</strong> <span id="next-time">Loading...</span></p>
+                            <p class="mb-0"><strong>Date:</strong> <span id="next-date">Loading...</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <h4><i class="fas fa-cogs"></i> Control Panel</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="email-time" class="form-label">Email Send Time</label>
+                            <input type="time" class="form-control time-input" id="email-time" value="07:00">
+                        </div>
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-success-custom btn-custom" id="start-scheduler">
+                                <i class="fas fa-play"></i> Start Scheduler
+                            </button>
+                            <button class="btn btn-danger-custom btn-custom" id="stop-scheduler">
+                                <i class="fas fa-stop"></i> Stop Scheduler
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-warning-custom btn-custom" id="send-test-email">
+                                <i class="fas fa-paper-plane"></i> Send Test Email
+                            </button>
+                            <button class="btn btn-primary-custom btn-custom" id="test-connection">
+                                <i class="fas fa-wifi"></i> Test Email Connection
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary-custom btn-custom" id="refresh-status">
+                                <i class="fas fa-sync-alt"></i> Refresh Status
+                            </button>
+                            <button class="btn btn-warning-custom btn-custom" id="send-now">
+                                <i class="fas fa-envelope"></i> Send Email Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <h5><i class="fas fa-info-circle"></i> Service Info</h5>
+                        <div id="service-info">
+                            <p class="mb-1"><strong>API Status:</strong> <span id="api-status">Online</span></p>
+                            <p class="mb-1"><strong>Last Check:</strong> <span id="last-check">Just now</span></p>
+                            <p class="mb-0"><strong>Uptime:</strong> <span id="uptime">Active</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <h5><i class="fas fa-chart-line"></i> Statistics</h5>
+                        <div id="stats">
+                            <p class="mb-1"><strong>Emails Sent Today:</strong> <span id="emails-today">0</span></p>
+                            <p class="mb-1"><strong>Total Emails:</strong> <span id="total-emails">0</span></p>
+                            <p class="mb-0"><strong>Success Rate:</strong> <span id="success-rate">100%</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="info-card">
+                <h5><i class="fas fa-list"></i> Activity Log</h5>
+                <div class="log-container" id="activity-log">
+                    <div class="log-entry log-info">[INFO] Dashboard loaded successfully</div>
+                    <div class="log-entry log-info">[INFO] Checking service status...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="success-toast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+            </div>
+            <div class="toast-body" id="success-message">
+                Operation completed successfully!
+            </div>
+        </div>
+        <div id="error-toast" class="toast" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong class="me-auto">Error</strong>
+            </div>
+            <div class="toast-body" id="error-message">
+                An error occurred!
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class AffirmationDashboard {
+            constructor() {
+                this.apiBase = window.location.origin;
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.loadStatus();
+                this.startAutoRefresh();
+            }
+
+            bindEvents() {
+                document.getElementById('start-scheduler').addEventListener('click', () => this.startScheduler());
+                document.getElementById('stop-scheduler').addEventListener('click', () => this.stopScheduler());
+                document.getElementById('send-test-email').addEventListener('click', () => this.sendTestEmail());
+                document.getElementById('test-connection').addEventListener('click', () => this.testConnection());
+                document.getElementById('refresh-status').addEventListener('click', () => this.loadStatus());
+                document.getElementById('send-now').addEventListener('click', () => this.sendEmailNow());
+            }
+
+            async loadStatus() {
+                try {
+                    this.addLog('Checking scheduler status...', 'info');
+                    const response = await fetch(`${this.apiBase}/scheduler-status`);
+                    const data = await response.json();
+                    
+                    this.updateStatus(data);
+                    this.updateLastCheck();
+                } catch (error) {
+                    this.addLog(`Error loading status: ${error.message}`, 'error');
+                    this.updateStatus({ scheduler_running: false, next_run_time: null });
+                }
+            }
+
+            updateStatus(data) {
+                const statusElement = document.getElementById('status-text');
+                const statusIndicator = document.querySelector('.status-indicator');
+                const statusDetails = document.getElementById('status-details');
+                const nextTime = document.getElementById('next-time');
+                const nextDate = document.getElementById('next-date');
+
+                if (data.scheduler_running) {
+                    statusElement.textContent = 'Running';
+                    statusIndicator.className = 'status-indicator status-running';
+                    statusDetails.textContent = 'Daily emails are being sent automatically';
+                } else {
+                    statusElement.textContent = 'Stopped';
+                    statusIndicator.className = 'status-indicator status-stopped';
+                    statusDetails.textContent = 'Scheduler is not running';
+                }
+
+                if (data.next_run_time) {
+                    const nextRun = new Date(data.next_run_time);
+                    nextTime.textContent = nextRun.toLocaleTimeString();
+                    nextDate.textContent = nextRun.toLocaleDateString();
+                } else {
+                    nextTime.textContent = 'Not scheduled';
+                    nextDate.textContent = 'N/A';
+                }
+            }
+
+            async startScheduler() {
+                const timeInput = document.getElementById('email-time').value;
+                const [hours, minutes] = timeInput.split(':');
+                
+                try {
+                    this.addLog(`Starting scheduler for ${timeInput}...`, 'info');
+                    const response = await fetch(`${this.apiBase}/start-scheduler?hour=${hours}&minute=${minutes}`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.showToast('success', 'Scheduler started successfully!');
+                        this.addLog('Scheduler started successfully', 'success');
+                        this.loadStatus();
+                    } else {
+                        throw new Error(data.detail || 'Failed to start scheduler');
+                    }
+                } catch (error) {
+                    this.showToast('error', `Failed to start scheduler: ${error.message}`);
+                    this.addLog(`Error starting scheduler: ${error.message}`, 'error');
+                }
+            }
+
+            async stopScheduler() {
+                try {
+                    this.addLog('Stopping scheduler...', 'info');
+                    const response = await fetch(`${this.apiBase}/stop-scheduler`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.showToast('success', 'Scheduler stopped successfully!');
+                        this.addLog('Scheduler stopped successfully', 'success');
+                        this.loadStatus();
+                    } else {
+                        throw new Error(data.detail || 'Failed to stop scheduler');
+                    }
+                } catch (error) {
+                    this.showToast('error', `Failed to stop scheduler: ${error.message}`);
+                    this.addLog(`Error stopping scheduler: ${error.message}`, 'error');
+                }
+            }
+
+            async sendTestEmail() {
+                try {
+                    this.addLog('Sending test email...', 'info');
+                    const response = await fetch(`${this.apiBase}/test-email`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.showToast('success', 'Test email sent successfully!');
+                        this.addLog('Test email sent successfully', 'success');
+                    } else {
+                        throw new Error(data.detail || 'Failed to send test email');
+                    }
+                } catch (error) {
+                    this.showToast('error', `Failed to send test email: ${error.message}`);
+                    this.addLog(`Error sending test email: ${error.message}`, 'error');
+                }
+            }
+
+            async testConnection() {
+                try {
+                    this.addLog('Testing email connection...', 'info');
+                    const response = await fetch(`${this.apiBase}/test-email`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.showToast('success', 'Email connection test successful!');
+                        this.addLog('Email connection test successful', 'success');
+                    } else {
+                        throw new Error(data.detail || 'Email connection test failed');
+                    }
+                } catch (error) {
+                    this.showToast('error', `Email connection test failed: ${error.message}`);
+                    this.addLog(`Email connection test failed: ${error.message}`, 'error');
+                }
+            }
+
+            async sendEmailNow() {
+                try {
+                    this.addLog('Sending email immediately...', 'info');
+                    const response = await fetch(`${this.apiBase}/send-email`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.showToast('success', 'Email sent successfully!');
+                        this.addLog(`Email sent: ${data.affirmation}`, 'success');
+                    } else {
+                        throw new Error(data.detail || 'Failed to send email');
+                    }
+                } catch (error) {
+                    this.showToast('error', `Failed to send email: ${error.message}`);
+                    this.addLog(`Error sending email: ${error.message}`, 'error');
+                }
+            }
+
+            addLog(message, type = 'info') {
+                const logContainer = document.getElementById('activity-log');
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry log-${type}`;
+                logEntry.textContent = `[${timestamp}] ${message}`;
+                
+                logContainer.appendChild(logEntry);
+                logContainer.scrollTop = logContainer.scrollHeight;
+                
+                // Keep only last 50 log entries
+                while (logContainer.children.length > 50) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+            }
+
+            showToast(type, message) {
+                const toastId = type === 'success' ? 'success-toast' : 'error-toast';
+                const messageId = type === 'success' ? 'success-message' : 'error-message';
+                
+                document.getElementById(messageId).textContent = message;
+                const toast = new bootstrap.Toast(document.getElementById(toastId));
+                toast.show();
+            }
+
+            updateLastCheck() {
+                document.getElementById('last-check').textContent = new Date().toLocaleTimeString();
+            }
+
+            startAutoRefresh() {
+                // Refresh status every 30 seconds
+                setInterval(() => {
+                    this.loadStatus();
+                }, 30000);
+            }
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new AffirmationDashboard();
+        });
+    </script>
+</body>
+</html>

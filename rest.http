@@ -1,0 +1,15 @@
+
+###
+
+# send email immediately
+POST http://localhost:8000/send-email HTTP/1.1
+Content-Type: application/json
+
+###
+
+POST http://localhost:8000/test-email HTTP/1.1
+
+###
+POST http://localhost:8000/start-scheduler?hour=23&minute=42 HTTP/1.1
+
+###

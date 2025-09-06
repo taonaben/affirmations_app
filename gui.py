@@ -3,6 +3,10 @@ import requests
 import datetime
 import os
 from dotenv import load_dotenv
+import time
+
+MAX_RETRIES = 3
+RETRY_DELAY = 5  # seconds
 
 load_dotenv()
 
@@ -19,15 +23,32 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-image: url("https://whvn.cc/ymxz7x");
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
+        min-height: 100vh;
     }
     
-    /* Optional: Add overlay for better text readability */
+    /* Fallback background image */
     .stApp::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0.7;
+        z-index: -1;
+    }
+    
+    /* Add overlay for better text readability */
+    .stApp::after {
         content: "";
         position: fixed;
         top: 0;
@@ -40,17 +61,37 @@ st.markdown(
     
     /* Style the main content area */
     .main .block-container {
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 10px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
         padding: 2rem;
         margin-top: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
     }
     
-    /* Optional: Style the title */
+    /* Style the title */
     h1 {
         text-align: center;
         color: #333;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+    
+    /* Style buttons */
+    .stButton > button {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 0.5rem 2rem;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
     </style>
     """,
@@ -82,19 +123,34 @@ col1, col2, col3 = st.columns([1, 2, 1])
 with col2:  # Put button in the middle column
     if st.button("✨ Make me talk ✨"):
         if not st.session_state["today_affirmation"]:
-            try:
-                response = requests.get(API_URL, timeout=10)
-                if response.status_code == 200:
-                    data = response.json()
-                    st.session_state["today_affirmation"] = data.get(
-                        "affirmation", "You are loved and appreciated 💕"
-                    )
-                else:
-                    st.session_state["today_affirmation"] = (
-                        "⚠️ Ooops, I’m sorry I disappointed you. You can try again later."
-                    )
-            except Exception as e:
-                st.session_state["today_affirmation"] = f"Error: {e}"
+            # Show loading message
+            loading_placeholder = st.empty()
+            loading_placeholder.info("Waking up the server… hang tight 💕")
+
+            success = False
+            for attempt in range(MAX_RETRIES):
+                try:
+                    response = requests.get(API_URL, timeout=40)
+                    if response.status_code == 200:
+                        data = response.json()
+                        st.session_state["today_affirmation"] = data.get(
+                            "affirmation", "You are loved and appreciated 💕"
+                        )
+                        success = True
+                        break
+                    else:
+                        if attempt == MAX_RETRIES - 1:  # Last attempt
+                            st.session_state["today_affirmation"] = (
+                                "⚠️ Ooops, I'm sorry I disappointed you. You can try again later."
+                            )
+                except Exception as e:
+                    if attempt == MAX_RETRIES - 1:  # Last attempt
+                        st.session_state["today_affirmation"] = f"Error: {e}"
+                    else:
+                        time.sleep(RETRY_DELAY)  # wait then retry
+
+            # Clear loading message
+            loading_placeholder.empty()
 
 
 # Display affirmation
