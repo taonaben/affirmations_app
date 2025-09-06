@@ -54,7 +54,7 @@ class EmailService:
                     <!-- Header -->
                     <div style="margin-bottom: 30px;">
                         <h1 style="color: #333; font-size: 28px; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
-                            💕 Here when I can't be there 💕
+                            💕 Here when I can't be there
                         </h1>
                         <p style="color: #666; font-size: 16px; margin: 10px 0 0 0;">
                             {datetime.now().strftime('%A, %B %d, %Y')}

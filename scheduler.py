@@ -70,7 +70,7 @@ class AffirmationScheduler:
         except Exception as e:
             logger.error(f"Error in daily affirmation process: {str(e)}")
 
-    def start_scheduler(self, hour: int = 7, minute: int = 0):
+    def start_scheduler(self, hour: int = 6, minute: int = 0):
         """Start the daily email scheduler."""
         try:
             # Add the daily job
